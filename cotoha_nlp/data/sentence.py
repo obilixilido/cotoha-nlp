@@ -54,8 +54,10 @@ class Chunk:
             return [self.sentence.chunks[link["link"]] for link in self.links if link["label"] in filter]
 
     def get_parent(self):
-        # FIXME
-        pass 
+        for chunk in self.sentence.chunks:
+            if self.id in [link["link"] for link in chunk.links]:
+                return chunk
+        # no child don't have parent!
 
     def __str__(self):
         return(json.dumps({
