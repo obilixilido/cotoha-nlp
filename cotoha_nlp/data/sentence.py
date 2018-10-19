@@ -93,9 +93,12 @@ class Token:
         else:
             return [self.sentence.tokens[deps["token_id"]] for deps in self.dependency_labels in deps["label"] in filter]
 
-    def get_parent_token(self):
-        # FIXME
+    def get_parent(self):
+        for token in self.sentence.tokens:
+            if self.id in [dep["token_id"] for dep in token.dependency_labels]:
+                return token
         pass
+        # no child don't have parent!
 
     def __repr__(self):
         return self.__str__()
