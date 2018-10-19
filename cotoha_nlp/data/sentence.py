@@ -86,8 +86,12 @@ class Token:
     def set_sentence(self, sentence: Sentence):
         self.sentence = sentence
 
-    def get_child_tokens(self, label: list = []):
+    def get_children(self, filter: list = []):
         return [self.sentence.tokens[deps["token_id"]] for deps in self.dependency_labels]
+        if len(filter) == 0:
+            return [self.sentence.tokens[deps["token_id"]] for deps in self.dependency_labels]
+        else:
+            return [self.sentence.tokens[deps["token_id"]] for deps in self.dependency_labels in deps["label"] in filter]
 
     def get_parent_token(self):
         # FIXME
