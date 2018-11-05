@@ -5,6 +5,7 @@ import requests
 import json
 
 from .data.sentence import Sentence
+from .auth import CotohaAuth
 
 class Parser:
     def __init__(self, client_id:str, client_secret:str, developer_api_base_url:str, access_token_publish_url:str, access_token:str = None):
@@ -16,38 +17,14 @@ class Parser:
             access_token_publish_url (str): Access Token Publicsh URL of COTOHA API
             access_token (str): Access token
         """
-        if access_token != None:
-            self.access_token = access_token
-        else:
-            self.client_id = client_id
-            self.client_secret = client_secret
-            self.developer_api_base_url = developer_api_base_url
-            self.access_token_publish_url = access_token_publish_url
-            self.update_access_token()
-
-    def update_access_token(self):
-        """ update Access Token 
-        TODO: use Requests-OAuthlib
-        """
-        if self.access_token_publish_url == None:
-            raise RuntimeError("access_token_publish_url is not provided.")
-        url = self.access_token_publish_url
-        headers={
-            "Content-Type": "application/json;charset=UTF-8"
-        }
-        data = {
-            "grantType": "client_credentials",
-            "clientId": self.client_id,
-            "clientSecret": self.client_secret
-        }
-        data = json.dumps(data)
-        response = requests.post(self.access_token_publish_url, headers=headers, data=data)
-        response = json.loads(response.text)
-        self.access_token = response["access_token"]
+        self.auth_info = CotohaAuth(client_id=client_id, client_secret=client_secret, 
+            access_token_publish_url=access_token_publish_url, 
+            access_token=access_token)
+        self.developer_api_base_url = developer_api_base_url
 
     def make_header(self):
         return {
-            "Authorization": "Bearer " + self.access_token,
+            "Authorization": "Bearer " + self.auth_info.access_token,
             "Content-Type": "application/json;charset=UTF-8",
         }
  
