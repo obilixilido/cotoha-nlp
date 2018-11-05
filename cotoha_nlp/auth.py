@@ -10,7 +10,6 @@ class CotohaAuth:
         Args:
             client_id (str): CLINED ID of COTOHA API
             client_secret (str): CLIENT SECRET of COTOHA API
-            developer_api_base_url (str): Developer API Base URL of COTOHA API
             access_token_publish_url (str): Access Token Publicsh URL of COTOHA API
             access_token (str): Access token
         """
