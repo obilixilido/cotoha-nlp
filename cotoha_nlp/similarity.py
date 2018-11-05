@@ -7,7 +7,7 @@ import json
 from .data.sentence import Sentence
 from .auth import CotohaAuth
 
-class Parser:
+class Similarity:
     def __init__(self, client_id:str, client_secret:str, developer_api_base_url:str, access_token_publish_url:str, access_token:str = None):
         """ initialize
         Args:
@@ -28,27 +28,28 @@ class Parser:
             "Content-Type": "application/json;charset=UTF-8",
         }
  
-    def parse(self, sentence: str, param: dict = {}):
-        """ Call Parse API 
+    def calc_similarity(self, sentence_1: str, sentence_2: str, param: dict = {}):
+        """ Call Similarity API 
         Args:
-            sentence (str): target sentence
-            param (dict): parameter of parse API. see https://api.ce-cotoha.com/contents/reference.html#api-Parse
+            sentence_1 (str): target sentence
+            sentence_2 (str): target sentence
+            param (dict): parameter of parse API. see https://api.ce-cotoha.com/contents/reference.html#api-Similarity
         Return:
            sentence object 
         """
         data = {
-            "sentence": sentence
+            "s1": sentence_1,
+            "s2": sentence_2
         }
         data.update(param)
         data = json.dumps(data)
         try:
-            with requests.post(self.developer_api_base_url + "/v1/parse", headers=self.make_header(), data=data) as res:
-                sentence = Sentence(sentence, json.loads(res.text)["result"])
-                for chunk in sentence.chunks:
-                    chunk.set_sentence(sentence)
-                    for token in chunk.tokens:
-                        token.set_sentence(sentence)
-                return sentence
+            with requests.post(self.developer_api_base_url + "/v1/similarity", headers=self.make_header(), data=data) as res:
+                return json.loads(res.text)["result"]["score"]
         except requests.exceptions.RequestException as e:
             # FIXME
+            if(res.status_code == 401):
+                # retry if auth error
+                self.auth_info.update_access_token()
+                return calc_similarity(sentence_1, sentence_2, param)
             raise e
