@@ -107,7 +107,7 @@ class Token:
         return(json.dumps(self.to_dict(), ensure_ascii=False))
 
     def to_json(self):
-        return self.__repr__();
+        return self.__repr__()
 
     def to_dict(self):
         return {
@@ -116,7 +116,7 @@ class Token:
             "lemma": self.lemma,
             "kana": self.kana,
             "pos": self.pos,
-            "feautes": self.features,
+            "features": self.features,
             "dependency_labels": self.dependency_labels,
             "attributes": self.attributes
         }
